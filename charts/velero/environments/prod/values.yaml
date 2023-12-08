@@ -1,0 +1,32 @@
+velero:
+  configuration:
+    backupStorageLocation:
+      - name: bsl-aws-velero
+        provider: aws
+        bucket: 613911047524-eu-central-1-velero
+        default: true
+        config:
+          region: eu-central-1
+
+  serviceAccount:
+    server:
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::613911047524:role/velero
+
+  schedules:
+    confluent-backup:
+      disabled: false
+      schedule: "0 */2 * * *"
+      template:
+        ttl: "24h"
+        storageLocation: bsl-aws-velero
+        includedNamespaces:
+          - "confluent"
+    all-platform-backup:
+      disabled: false
+      schedule: "0 3 * * *"
+      template:
+        ttl: "36h"
+        storageLocation: bsl-aws-velero
+        includedNamespaces:
+          - "*"
